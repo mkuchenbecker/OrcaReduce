@@ -11,11 +11,10 @@ bootstrap:
 lint: fmt
 	golangci-lint run
 
-.PHONY: test-ci
+.PHONY: test-flake
 test-ci:
 	@echo "tests:"
-	go test -v -covermode=count -coverprofile=data/coverage.out ./data/...
-	go test -v -covermode=count -coverprofile=brewery/coverage.out ./brewery/...
+	richgo test -count=30 -v -cover ./...
 
 .PHONY: install-golang-ci
 lint-ci:
