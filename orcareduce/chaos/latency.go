@@ -53,6 +53,10 @@ func (cfg *randomLatency) Latency() {
 	}
 }
 
+func NewRandomLatency(latency orcareduce.LatencyInjector, percent float64) orcareduce.LatencyInjector {
+	return &randomLatency{latency: latency, percent: percent}
+}
+
 type metaLatency struct {
 	latency []orcareduce.LatencyInjector
 }
@@ -61,4 +65,8 @@ func (this *metaLatency) Latency() {
 	for _, latency := range this.latency {
 		latency.Latency()
 	}
+}
+
+func NewMetaLatency(latency []orcareduce.LatencyInjector) orcareduce.LatencyInjector {
+	return &metaLatency{latency: latency}
 }
