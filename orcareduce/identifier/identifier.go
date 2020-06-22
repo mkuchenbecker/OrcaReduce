@@ -3,6 +3,8 @@ package identifier
 import (
 	"bytes"
 	"crypto/sha256"
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/mkuchenbecker/orcareduce/orcareduce"
@@ -11,7 +13,7 @@ import (
 type identifier struct {
 	id     string
 	scope  orcareduce.Scope
-	level  int
+	depth  int
 	parent *identifier
 }
 
@@ -31,10 +33,11 @@ func (this *identifier) Lineage() []orcareduce.ID {
 func (this *identifier) String() string {
 	lineage := this.Lineage()
 	var buf bytes.Buffer
-	for i := len(lineage) - 1; i >= 0; i++ {
-		buf.WriteString(lineage[i].Value())
+	for i := len(lineage) - 1; i >= 0; i-- {
+		buf.WriteString(fmt.Sprintf("%s(%s)", lineage[i].Scope(), lineage[i].Value()))
+		buf.WriteString(".")
 	}
-	return buf.String()
+	return strings.Trim(buf.String(), ".")
 }
 
 func (this *identifier) Value() string {
@@ -47,17 +50,22 @@ func (this *identifier) Parent() orcareduce.ID {
 
 func (this *identifier) NewChild() orcareduce.ID {
 	out := New()
-	out.level = this.level + 1
+	out.depth = this.depth + 1
 	out.parent = this
 	return out
 }
 
-func (this *identifier) NewScopedChild(scope orcareduce.Scope) orcareduce.ID {
-	out := New()
-	out.scope = scope
-	out.level = this.level + 1
-	out.parent = this
-	return out
+func (this *identifier) Depth() int {
+	return this.depth
+}
+
+func (this *identifier) Scope() orcareduce.Scope {
+	return this.scope
+}
+
+func (this *identifier) WithScope(scope orcareduce.Scope) orcareduce.ID {
+	this.scope = scope
+	return this
 }
 
 func New() *identifier {

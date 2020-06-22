@@ -20,7 +20,9 @@ type ID interface {
 	Lineage() []ID
 	Parent() ID
 	NewChild() ID
-	NewScopedChild(scope Scope) ID
+	Depth() int
+	Scope() Scope
+	WithScope(Scope) ID
 }
 
 type Director interface {
