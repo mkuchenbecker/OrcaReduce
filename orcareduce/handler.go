@@ -45,6 +45,7 @@ type Handler interface {
 }
 
 // A SyncFunc is a function with no parameters that returns an error.
+// Calling a SyncFunc blocks the thread until the function is called.
 type SyncFunc func() error
 
 // A RunFunc is a function with no parameters that returns an error.
