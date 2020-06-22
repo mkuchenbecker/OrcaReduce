@@ -1,6 +1,7 @@
-package exceptions
+package handler
 
 import (
+	"github.com/mkuchenbecker/orcareduce/orcareduce"
 	"github.com/mkuchenbecker/orcareduce/orcareduce/exceptions"
 	"github.com/pkg/errors"
 )
@@ -9,7 +10,7 @@ import (
 // It has basic functionality and an internal logger so it can log
 // errors it encountners.
 type workflowHandler struct {
-	logger exceptions.Logger
+	logger orcareduce.Logger
 }
 
 // HandleError logs an error at the appropriate level and returns
@@ -52,7 +53,7 @@ func (w workflowHandler) HandlePanic(err *error) {
 // are returned by the RunFunc, and recovers from any panics in the RunFunc.
 // The return value SyncFunc is a function that blocks until the RunFunc has
 // completed execution.
-func (w workflowHandler) RunAsync(f exceptions.RunFunc) exceptions.SyncFunc {
+func (w workflowHandler) RunAsync(f orcareduce.RunFunc) orcareduce.SyncFunc {
 	done := make(chan error)
 	go func() {
 		var err error
@@ -69,6 +70,6 @@ func (w workflowHandler) RunAsync(f exceptions.RunFunc) exceptions.SyncFunc {
 }
 
 // NewHandler makes a Handler using the supplied logger.
-func NewHandler(logger exceptions.Logger) exceptions.Handler {
+func NewHandler(logger orcareduce.Logger) orcareduce.Handler {
 	return workflowHandler{logger: logger}
 }

@@ -1,13 +1,13 @@
-package exceptions
+package logger
 
 import (
 	"github.com/golang/glog"
-	"github.com/mkuchenbecker/orcareduce/orcareduce/exceptions"
+	"github.com/mkuchenbecker/orcareduce/orcareduce"
 )
 
 // DefaultLogger fetches a simple default logger.
 // The logger it returns uses glog as a logger backend.
-func DefaultLogger() exceptions.Logger {
+func DefaultLogger() orcareduce.Logger {
 	return logger{
 		errorf: glog.Errorf,
 		infof:  glog.Infof,

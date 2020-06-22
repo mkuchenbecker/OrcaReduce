@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
+
+	"github.com/mkuchenbecker/orcareduce/orcareduce"
 )
 
 type randomStaticErrors struct {
@@ -18,12 +20,8 @@ func (cfg *randomStaticErrors) Error() error {
 	return nil
 }
 
-type staticLatency struct {
-	latency time.Duration
-}
-
 type metaErrors struct {
-	errors []ErrorInjector
+	errors []orcareduce.ErrorInjector
 }
 
 func (cfg *metaErrors) Error() error {
@@ -36,43 +34,9 @@ func (cfg *metaErrors) Error() error {
 	return nil
 }
 
-func (cfg *staticLatency) Latency() {
-	time.Sleep(cfg.latency)
-}
-
-type dynamicLatency struct {
-	maxLatency time.Duration
-}
-
-func (cfg *dynamicLatency) Latency() {
-	val := rand.Int63n(int64(cfg.maxLatency))
-	time.Sleep(time.Duration(val))
-}
-
-type randomLatency struct {
-	latency LatencyInjector
-	percent float64
-}
-
-func (cfg *randomLatency) Latency() {
-	if rand.Float64() < cfg.percent {
-		cfg.latency.Latency()
-	}
-}
-
-type metaLatency struct {
-	latency []LatencyInjector
-}
-
-func (this *metaLatency) Latency() {
-	for _, latency := range this.latency {
-		latency.Latency()
-	}
-}
-
 type metaInjector struct {
-	latency LatencyInjector
-	errors  ErrorInjector
+	latency orcareduce.LatencyInjector
+	errors  orcareduce.ErrorInjector
 }
 
 func (cfg *metaInjector) Latency() {
@@ -83,10 +47,10 @@ func (cfg *metaInjector) Error() error {
 	return cfg.errors.Error()
 }
 
-func NewDefault() Injector {
+func NewDefault() orcareduce.Injector {
 	return &metaInjector{
 		latency: &metaLatency{
-			latency: []LatencyInjector{
+			latency: []orcareduce.LatencyInjector{
 				&staticLatency{latency: 20 * time.Millisecond},
 				&dynamicLatency{maxLatency: 20 * time.Millisecond},
 				&randomLatency{percent: 0.1, latency: &dynamicLatency{maxLatency: 100 * time.Millisecond}},
@@ -96,7 +60,7 @@ func NewDefault() Injector {
 			},
 		},
 		errors: &metaErrors{
-			errors: []ErrorInjector{
+			errors: []orcareduce.ErrorInjector{
 				&randomStaticErrors{err: fmt.Errorf("[chaos] encountered an error"), errorRate: 0.1},
 			},
 		},

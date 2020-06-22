@@ -1,4 +1,4 @@
-package chaos
+package orcareduce
 
 type Injector interface {
 	Latency()

@@ -1,4 +1,4 @@
-package exceptions
+package handler
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/mkuchenbecker/orcareduce/orcareduce/exceptions"
-	"github.com/mkuchenbecker/orcareduce/orcareduce/exceptions/mock"
+	"github.com/mkuchenbecker/orcareduce/orcareduce/mock"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -143,5 +143,4 @@ func TestHandler_HandleError(t *testing.T) {
 		err := handler.HandleError(sourceError)
 		assert.Equal(t, sourceError, err)
 	})
-
 }

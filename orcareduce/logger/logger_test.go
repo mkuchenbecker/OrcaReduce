@@ -1,4 +1,4 @@
-package exceptions
+package logger
 
 import (
 	"fmt"
