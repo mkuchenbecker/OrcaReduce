@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package orcareduce.model;
+
+option go_package = "orcareduce/model";
+
+message Key {
+  string value = 1;
+}
+
+enum ActorStatus {
+  UNKNOWN_ACTOR_STATE = 0;
+  PENDING = 1;
+  SUCCESS = 2;
+  CANCELED = 3;
+}
+
+message Run {
+  Key ActorID = 1;
+  Key DirectorID = 2;
+  uint64 timestamp = 3;
+  enum Result {
+    UNKNOWN = 0;
+    FAILED_PRECONDITION = 1;
+    FAILED_OPERATION = 2;
+    FAILED_SUCCESS_SIGNAL = 3;
+    SUCCESS = 4;
+  }
+  string error = 4;
+}
+
+message RunMetadata {
+  repeated Run runs = 1;
+}
+
+message StateMetadata {
+  Key state_id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message ActorState {
+  Key key = 1;
+  ActorStatus status = 2;
+  RunMetadata metadata = 3;
+  uint64 revision = 4;
+}
+
